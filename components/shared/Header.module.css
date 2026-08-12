@@ -1,0 +1,110 @@
+.header {
+  position: relative;
+  z-index: 2;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--content-padding);
+  background: #032e26;
+  border-bottom: 1px solid rgba(92, 172, 136, .34);
+}
+
+.headerInner {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brandArea { display: flex; align-items: center; gap: 13px; min-width: 0; }
+
+.studioMark {
+  color: var(--color-yellow);
+  font-family: var(--font-mono);
+  font-size: .57rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.studioMark::after { content: ''; display: block; width: 100%; height: 2px; margin-top: 3px; background: var(--color-pink); }
+
+.brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+
+.brandIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #171b16;
+  background-color: var(--color-yellow);
+  color: var(--color-black);
+  font-family: var(--font-mono);
+  font-size: .875rem;
+  font-weight: 700;
+}
+
+.brandText { display: flex; align-items: baseline; gap: 9px; color: var(--color-yellow); line-height: 1; white-space: nowrap; }
+
+.brandName {
+  font-family: "Bodoni MT", Didot, "Times New Roman", serif;
+  font-size: 1.24rem;
+  font-weight: 700;
+  letter-spacing: -.065em;
+  text-transform: uppercase;
+}
+
+.brandAccent {
+  color: var(--color-pink);
+  font-family: var(--font-body);
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: -.07em;
+  line-height: .85;
+}
+
+.headerTag {
+  display: inline-flex;
+  align-items: center;
+  color: #f85592;
+  border: 2px solid currentColor;
+  border-radius: 7px;
+  padding: 5px 9px;
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .045em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tagPalm {
+  display: inline-grid;
+  place-items: center;
+  align-self: stretch;
+  margin: -5px -9px -5px 9px;
+  padding: 0 9px;
+  border-left: 1px solid rgba(248, 85, 146, .34);
+  font-size: 1.05em;
+}
+
+@media (max-width: 767px) {
+  .header { height: 241px; padding: 0 20px; }
+  .headerInner { flex-direction: column; justify-content: center; gap: 24px; }
+  .brandArea { flex-direction: column; gap: 9px; }
+  .studioMark { font-size: .69rem; letter-spacing: .08em; }
+  .brand { gap: 14px; }
+  .brandIcon { width: 61px; height: 61px; font-size: 1.35rem; }
+  .brandText { gap: 13px; }
+  .brandName { font-size: 1.9rem; letter-spacing: -.07em; }
+  .brandAccent { font-size: 1.7rem; }
+  .headerTag { padding: 8px 24px; font-size: 1.2rem; letter-spacing: .045em; }
+  .tagPalm { margin: -8px -24px -8px 18px; padding: 0 18px; }
+}
