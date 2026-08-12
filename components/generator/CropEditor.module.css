@@ -1,0 +1,141 @@
+/* ============================================================
+   CROP EDITOR STYLES
+   Reusable crop UI for all 5 templates
+   ============================================================ */
+
+.cropWrapper {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cropContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--region-aspect, 1);
+  overflow: hidden;
+  border: 2px solid rgba(242, 240, 213, 0.55);
+  border-radius: 14px;
+  background: #02261f;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.cropContainer:active {
+  cursor: grabbing;
+}
+
+.cropImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Mask overlay — darkens the area outside the crop region */
+.maskOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Zoom controls */
+.zoomControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.zoomLabel {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-yellow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.zoomSlider {
+  flex: 1;
+  height: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(242, 240, 213, 0.25);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.zoomSlider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-yellow);
+  border: 2px solid #171b16;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(15, 24, 18, 0.5);
+}
+
+.zoomSlider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-yellow);
+  border: 2px solid #171b16;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(15, 24, 18, 0.5);
+}
+
+.zoomValue {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e4decb;
+  min-width: 40px;
+  text-align: right;
+}
+
+.cropHint {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #c9c3b0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .cropWrapper {
+    max-width: 100%;
+  }
+
+  .cropContainer {
+    border-radius: 10px;
+  }
+
+  .zoomSlider::-webkit-slider-thumb {
+    width: 26px;
+    height: 26px;
+  }
+
+  .zoomSlider::-moz-range-thumb {
+    width: 26px;
+    height: 26px;
+  }
+}

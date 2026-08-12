@@ -1,0 +1,201 @@
+/* ============================================================
+   PREVIEW CANVAS STYLES
+   Hybrid approach: template PNG bg + canvas photo + HTML text
+   ============================================================ */
+
+.previewWrapper {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.canvasWrap {
+  position: relative;
+  width: 100%;
+  border: 2px solid rgba(242, 240, 213, 0.55);
+  border-radius: 14px;
+  background: #02261f;
+  padding: 12px;
+}
+
+/* ── Card container: holds template bg + photo canvas + text ── */
+.cardContainer {
+  position: relative;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ── Photo canvas: absolutely positioned over the beige placeholder ── */
+.photoCanvas {
+  position: absolute;
+  display: block;
+  /* Canvas native resolution is set via JS (width/height attrs)
+     but it's displayed at CSS % size to match the template */
+}
+
+/* ── Text fields: positioned over the beige input boxes ── */
+.textField {
+  position: absolute;
+  transform: translateY(-50%); /* y coordinate is vertical center */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Loading spinner over the canvas */
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 38, 31, 0.85);
+  z-index: 2;
+  border-radius: 14px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 213, 0, 0.3);
+  border-top-color: var(--color-yellow);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Action buttons row */
+.previewActions {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+}
+
+.downloadBtn,
+.shareBtn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 6px;
+  padding: 14px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  border: 2px solid #171b16;
+}
+
+.downloadBtn {
+  background: var(--color-yellow);
+  color: #152d20;
+  box-shadow: 3px 3px 0 rgba(15, 24, 18, 0.75);
+}
+
+.downloadBtn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 rgba(15, 24, 18, 0.75);
+  background: var(--color-yellow-soft);
+}
+
+.shareBtn {
+  background: rgba(1, 43, 35, 0.88);
+  color: #fffdf2;
+  border-color: rgba(242, 240, 213, 0.55);
+  box-shadow: 3px 3px 0 rgba(15, 24, 18, 0.5);
+}
+
+.shareBtn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 rgba(15, 24, 18, 0.5);
+  background: rgba(3, 61, 48, 0.94);
+  border-color: var(--color-yellow);
+}
+
+.shareBtn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* Status badge */
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #a7f3d0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Error message */
+.renderError {
+  padding: 12px 20px;
+  border: 1px solid #ff5898;
+  border-radius: 8px;
+  background: rgba(255, 88, 152, 0.1);
+  color: #ffb3d1;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .previewWrapper {
+    max-width: 100%;
+  }
+
+  .canvasWrap {
+    border-radius: 10px;
+    padding: 8px;
+  }
+
+  .previewActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .downloadBtn,
+  .shareBtn {
+    min-height: 52px;
+    font-size: 0.85rem;
+  }
+}

@@ -7,10 +7,15 @@ import {
   generateBuilderId,
   OUTPUT_TYPES,
   TEMPLATE_CATALOGUE,
+  FIELD_LIMITS,
 } from '@/lib/generator/templateConfig';
+import { getInitialCrop } from '@/lib/generator/faceDetect';
+import CropEditor from '@/components/generator/CropEditor';
+import PreviewCanvas from '@/components/generator/PreviewCanvas';
 import goaBackground from '../Reference/Gemini_Generated_Image_f5c3yaf5c3yaf5c3.png';
 import styles from './page.module.css';
 
+// Trigger HMR update 2
 const benefits = [
   {
     title: '100% Private',
@@ -70,20 +75,26 @@ export default function HomePage() {
     team: '',
     builderId: generateBuilderId(),
   }));
-  const [futureNotice, setFutureNotice] = useState(false);
+  const [cropParams, setCropParams] = useState({ centerX: 0.5, centerY: 0.5, zoom: 1 });
+  const [initialCrop, setInitialCrop] = useState(null);
+  const [isDetectingFace, setIsDetectingFace] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = useRef(null);
 
-  const maxSteps = generator.outputType === 'pfp' ? 3 : 4;
+  const maxSteps = generator.outputType === 'pfp' ? 5 : 6;
 
   const templates = useMemo(
     () => TEMPLATE_CATALOGUE.filter((template) => template.outputType === generator.outputType),
     [generator.outputType]
   );
 
+  const selectedTemplateConfig = useMemo(
+    () => TEMPLATE_CATALOGUE.find((t) => t.id === generator.template),
+    [generator.template]
+  );
+
   const setPhoto = (photo) => {
     setGenerator((prev) => ({ ...prev, photo, outputType: null, template: null }));
-    setFutureNotice(false);
   };
 
   const setOutputType = (outputType) => {
@@ -92,18 +103,34 @@ export default function HomePage() {
       outputType,
       template: current.outputType === outputType ? current.template : null,
     }));
-    setFutureNotice(false);
     setActiveSlide(0);
   };
 
   const setTemplate = (templateId) => {
     setGenerator((current) => ({ ...current, template: templateId }));
-    setFutureNotice(false);
   };
 
   const handleInputChange = (field, value) => {
     setGenerator((prev) => ({ ...prev, [field]: value }));
-    setFutureNotice(false);
+  };
+
+  const handleProceedToCrop = () => {
+    setIsDetectingFace(true);
+    if (generator.photo?.previewUrl && selectedTemplateConfig) {
+      const img = new window.Image();
+      img.onload = async () => {
+        const aspect = selectedTemplateConfig.photoRegion.w / selectedTemplateConfig.photoRegion.h;
+        const initCrop = await getInitialCrop(generator.photo.previewUrl, img.naturalWidth, img.naturalHeight, aspect);
+        setInitialCrop(initCrop);
+        setCropParams(initCrop);
+        setIsDetectingFace(false);
+        setStep(5);
+      };
+      img.src = generator.photo.previewUrl;
+    } else {
+      setIsDetectingFace(false);
+      setStep(5);
+    }
   };
 
   // Carousel scroll handling for mobile Step 3
@@ -311,16 +338,16 @@ export default function HomePage() {
                 ← Back
               </button>
               <ContinueButton
-                disabled={!generator.template}
+                disabled={!generator.template || isDetectingFace}
                 onClick={() => {
                   if (generator.outputType === 'pfp') {
-                    setFutureNotice(true);
+                    handleProceedToCrop();
                   } else {
                     setStep(4);
                   }
                 }}
               >
-                {generator.outputType === 'pfp' ? 'Complete PFP' : 'Continue'}
+                {isDetectingFace ? 'Loading...' : generator.outputType === 'pfp' ? 'Crop Photo' : 'Continue'}
               </ContinueButton>
             </div>
 
@@ -394,24 +421,18 @@ export default function HomePage() {
               ← Back
             </button>
             <ContinueButton
-              disabled={!generator.template}
+              disabled={!generator.template || isDetectingFace}
               onClick={() => {
                 if (generator.outputType === 'pfp') {
-                  setFutureNotice(true);
+                  handleProceedToCrop();
                 } else {
                   setStep(4);
                 }
               }}
             >
-              {generator.outputType === 'pfp' ? 'Complete PFP' : 'Continue'}
+              {isDetectingFace ? 'Loading...' : generator.outputType === 'pfp' ? 'Crop Photo' : 'Continue'}
             </ContinueButton>
           </div>
-
-          {futureNotice && generator.outputType === 'pfp' && (
-            <p className={styles.futureNotice} role="status">
-              ✓ PFP Frame selection complete! Next technical phase: Canvas rendering &amp; photo cropping.
-            </p>
-          )}
         </main>
       )}
 
@@ -442,8 +463,12 @@ export default function HomePage() {
                   placeholder="e.g. Satoshi Nakamoto"
                   value={generator.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
+                  maxLength={FIELD_LIMITS.name}
                   required
                 />
+                <span className={`${styles.charCount} ${generator.name.length >= FIELD_LIMITS.name ? styles.atLimit : generator.name.length >= FIELD_LIMITS.name - 5 ? styles.nearLimit : ''}`}>
+                  {generator.name.length} / {FIELD_LIMITS.name}
+                </span>
               </div>
 
               {/* ROLE / POST */}
@@ -458,8 +483,12 @@ export default function HomePage() {
                   placeholder="e.g. Smart Contract Engineer"
                   value={generator.role}
                   onChange={(e) => handleInputChange('role', e.target.value)}
+                  maxLength={FIELD_LIMITS.role}
                   required
                 />
+                <span className={`${styles.charCount} ${generator.role.length >= FIELD_LIMITS.role ? styles.atLimit : generator.role.length >= FIELD_LIMITS.role - 5 ? styles.nearLimit : ''}`}>
+                  {generator.role.length} / {FIELD_LIMITS.role}
+                </span>
               </div>
 
               {/* TEAM / STACK */}
@@ -474,7 +503,11 @@ export default function HomePage() {
                   placeholder="e.g. Rust / Solana / Anchor"
                   value={generator.team}
                   onChange={(e) => handleInputChange('team', e.target.value)}
+                  maxLength={FIELD_LIMITS.team}
                 />
+                <span className={`${styles.charCount} ${generator.team.length >= FIELD_LIMITS.team ? styles.atLimit : generator.team.length >= FIELD_LIMITS.team - 5 ? styles.nearLimit : ''}`}>
+                  {generator.team.length} / {FIELD_LIMITS.team}
+                </span>
               </div>
 
               {/* BUILDER ID (AUTO-GENERATED, READ-ONLY) */}
@@ -504,18 +537,80 @@ export default function HomePage() {
               ← Back
             </button>
             <ContinueButton
-              disabled={!isDetailsValid}
-              onClick={() => setFutureNotice(true)}
+              disabled={!isDetailsValid || isDetectingFace}
+              onClick={handleProceedToCrop}
             >
-              Complete Builder ID
+              {isDetectingFace ? 'Loading...' : 'Crop Photo'}
             </ContinueButton>
           </div>
+        </main>
+      )}
 
-          {futureNotice && (
-            <p className={styles.futureNotice} role="status">
-              ✓ Builder ID details saved! Next technical phase: Canvas rendering &amp; photo cropping.
+      {/* STEP 5: CROP PHOTO */}
+      {step === 5 && selectedTemplateConfig && (
+        <main className={styles.stepScreen} aria-labelledby="crop-title">
+          <div className={styles.stepIntro}>
+            <p className={styles.stepLabel}>Step {generator.outputType === 'pfp' ? 4 : 5} of {maxSteps}</p>
+            <h1 id="crop-title" className={styles.pageTitle}>
+              Frame your <span>photo</span>
+            </h1>
+            <p className={styles.pageDesc}>
+              Adjust your photo to fit perfectly into the {selectedTemplateConfig.title} template.
             </p>
-          )}
+          </div>
+
+          <CropEditor
+            imageUrl={generator.photo?.previewUrl}
+            maskShape={selectedTemplateConfig.maskShape}
+            regionAspect={selectedTemplateConfig.photoRegion.w / selectedTemplateConfig.photoRegion.h}
+            initialCrop={initialCrop}
+            onCropChange={setCropParams}
+          />
+
+          <div className={styles.stepActions}>
+            <button type="button" className={styles.backButton} onClick={() => setStep(generator.outputType === 'pfp' ? 3 : 4)}>
+              ← Back
+            </button>
+            <ContinueButton onClick={() => setStep(6)}>
+              Preview Output
+            </ContinueButton>
+          </div>
+        </main>
+      )}
+
+      {/* STEP 6: PREVIEW & EXPORT */}
+      {step === 6 && selectedTemplateConfig && (
+        <main className={styles.stepScreen} aria-labelledby="preview-title">
+          <div className={styles.stepIntro}>
+            <p className={styles.stepLabel}>Step {maxSteps} of {maxSteps}</p>
+            <h1 id="preview-title" className={styles.pageTitle}>
+              Your {generator.outputType === 'builder' ? 'Builder ID' : 'PFP'} is <span>ready</span>
+            </h1>
+            <p className={styles.pageDesc}>
+              Preview your final image below. You can go back to make changes, or export it to share!
+            </p>
+          </div>
+
+          <PreviewCanvas
+            template={selectedTemplateConfig}
+            userImageUrl={generator.photo?.previewUrl}
+            cropParams={cropParams}
+            userData={{
+              name: generator.name,
+              role: generator.role,
+              team: generator.team,
+              builderId: generator.builderId,
+            }}
+          />
+
+          <div className={styles.stepActions}>
+            <button type="button" className={styles.backButton} onClick={() => setStep(5)}>
+              ← Adjust Crop
+            </button>
+            <button type="button" className={styles.backButton} onClick={() => setStep(generator.outputType === 'pfp' ? 3 : 4)}>
+              ← Change {generator.outputType === 'pfp' ? 'Template' : 'Details'}
+            </button>
+          </div>
         </main>
       )}
 

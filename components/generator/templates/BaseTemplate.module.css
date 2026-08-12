@@ -1,0 +1,248 @@
+/* CSS for BaseTemplate (Pure HTML/CSS version of Classic Base) */
+
+.templateContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1856 / 2304;
+  background-color: #0c331a; /* Dark green background */
+  color: #fff;
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 4%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inner Decorative Border */
+.innerBorder {
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  right: 2%;
+  bottom: 2%;
+  border: 2px solid #5a9e63;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Header Area */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5%;
+  z-index: 2;
+}
+
+.timeTag {
+  color: #e8c338;
+  font-family: var(--font-mono), monospace;
+  font-size: 1.5cqi;
+  line-height: 1.2;
+}
+
+.timeTagHighlight {
+  font-size: 2.5cqi;
+  font-weight: bold;
+}
+
+.titleArea {
+  text-align: center;
+}
+
+.title {
+  font-family: 'Times New Roman', serif; /* Or a specific serif font if available */
+  font-size: 8cqi;
+  color: #e8c338;
+  margin: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.goaText {
+  color: #d13054;
+  font-size: 5cqi;
+  vertical-align: middle;
+}
+
+.subtitle {
+  color: #e8c338;
+  font-family: var(--font-mono), monospace;
+  font-size: 1.8cqi;
+  margin: 1% 0 0 0;
+  letter-spacing: 0.1em;
+}
+
+.techIcon {
+  width: 8cqi;
+  height: 8cqi;
+  border: 1.5px solid #e8c338;
+  border-radius: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.techIconInner {
+  color: #e8c338;
+  font-family: var(--font-mono), monospace;
+  font-size: 2cqi;
+}
+
+/* Main Content */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3%;
+  z-index: 2;
+}
+
+/* Photo Region */
+.photoRegion {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2%;
+}
+
+.photoFrame {
+  width: 70%;
+  aspect-ratio: 1;
+  background-color: #f2ecd6;
+  position: relative;
+  /* Octagon clip path to mimic the chamfered corners */
+  clip-path: polygon(
+    10% 0%, 90% 0%, 
+    100% 10%, 100% 90%, 
+    90% 100%, 10% 100%, 
+    0% 90%, 0% 10%
+  );
+  border: 4px solid #144f29; /* Inner border to make it pop */
+  box-shadow: inset 0 0 0 4px #e8c338; /* Double border effect */
+  overflow: hidden;
+}
+
+.userPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photoPlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: #e0d9c1;
+}
+
+/* Input Fields */
+.fieldsRegion {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5cqi;
+  padding: 0 5%;
+}
+
+.fieldRow {
+  display: flex;
+  align-items: stretch;
+  height: 6cqi;
+}
+
+.fieldLabel {
+  width: 30%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #5a9e63;
+  border-radius: 4px 0 0 4px;
+  border-right: none;
+  padding-left: 2%;
+}
+
+.fieldLabelIcon {
+  color: #d13054;
+  font-size: 2.5cqi;
+  margin-right: 5%;
+}
+
+.fieldLabelText {
+  color: #e8c338;
+  font-family: var(--font-mono), monospace;
+  font-size: 2cqi;
+  letter-spacing: 0.05em;
+}
+
+.fieldValue {
+  flex: 1;
+  background-color: #f2ecd6; /* Beige input box */
+  color: #144f29;
+  font-size: 2.5cqi;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  padding: 0 3%;
+  border-radius: 4px;
+  /* Slight chamfer on the beige box using clip path */
+  clip-path: polygon(
+    2% 0, 98% 0, 100% 15%, 100% 85%, 98% 100%, 2% 100%, 0 85%, 0 15%
+  );
+}
+
+.builderIdValue {
+  color: #a37c00;
+}
+
+/* Footer Area */
+.footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1cqi;
+  z-index: 2;
+  margin-bottom: 2%;
+}
+
+.footerBadge {
+  display: flex;
+  align-items: center;
+  gap: 1.5cqi;
+  border: 1.5px solid #5a9e63;
+  padding: 1% 4%;
+  border-radius: 4px;
+  background-color: rgba(12, 51, 26, 0.8);
+}
+
+.est, .year {
+  color: #144f29;
+  background-color: #e8c338;
+  padding: 0.2cqi 0.8cqi;
+  font-size: 1.2cqi;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
+.footerBadgeText {
+  color: #e8c338;
+  font-family: 'Times New Roman', serif;
+  font-size: 4cqi;
+  letter-spacing: 0.1em;
+}
+
+.footerGoa {
+  color: #d13054;
+  font-size: 2cqi;
+}
+
+.hashtag {
+  color: #e8c338;
+  border: 1px solid #5a9e63;
+  padding: 0.5cqi 3cqi;
+  border-radius: 20px;
+  font-size: 1.8cqi;
+  letter-spacing: 0.05em;
+}

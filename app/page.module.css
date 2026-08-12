@@ -937,3 +937,25 @@
     padding: 12px 10px;
   }
 }
+
+/* ============================================================
+   CHARACTER COUNTER
+   ============================================================ */
+
+.charCount {
+  display: block;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #bbb49f;
+  margin-top: 4px;
+}
+
+.charCount.nearLimit {
+  color: var(--color-yellow);
+}
+
+.charCount.atLimit {
+  color: #ff5898;
+}
+
