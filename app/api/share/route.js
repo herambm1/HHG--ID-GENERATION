@@ -32,6 +32,10 @@ export async function POST(request) {
         contentType: 'image/png',
       });
       imageUrl = blob.url;
+    } else if (process.env.VERCEL) {
+      // ── Running on Vercel but missing token ───────────────────
+      console.error('[api/share] BLOB_READ_WRITE_TOKEN is missing in Vercel environment.');
+      return Response.json({ error: 'Blob storage is not configured in this environment.' }, { status: 500 });
     } else {
       // ── Filesystem fallback (local dev) ───────────────────────
       const { writeFile, mkdir } = await import('fs/promises');
