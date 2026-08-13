@@ -1,0 +1,315 @@
+/* ============================================================
+   CALIBRATION TOOL STYLES
+   Internal development tool — /calibrate
+   ============================================================ */
+
+.calibratePage {
+  min-height: 100vh;
+  background: #0a0e0a;
+  color: #e8f5e8;
+  font-family: 'Courier New', monospace;
+  outline: none;
+}
+
+.calibrateHeader {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid rgba(100, 200, 100, 0.2);
+  background: rgba(0, 30, 0, 0.8);
+}
+
+.calibrateTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #00ff88;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.devBadge {
+  font-size: 0.6rem;
+  background: #ff4040;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.1em;
+  font-weight: 900;
+}
+
+.calibrateDesc {
+  font-size: 0.8rem;
+  color: #7ab87a;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.calibrateDesc kbd {
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 0.75rem;
+  color: #00ff88;
+}
+
+/* ── Layout ── */
+.calibrateLayout {
+  display: flex;
+  height: calc(100vh - 100px);
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.calibrateSidebar {
+  width: 300px;
+  min-width: 260px;
+  max-width: 340px;
+  border-right: 1px solid rgba(100, 200, 100, 0.2);
+  overflow-y: auto;
+  background: rgba(0, 20, 0, 0.9);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.controlSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.controlLabel {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: #00ff88;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.templateButtons,
+.regionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.templateBtn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid rgba(100, 200, 100, 0.3);
+  background: transparent;
+  color: #c8e8c8;
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.templateBtn:hover {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(0, 255, 136, 0.5);
+}
+
+.templateBtn.active {
+  background: rgba(0, 255, 136, 0.2);
+  border-color: #00ff88;
+  color: #00ff88;
+}
+
+.templateType {
+  font-size: 0.62rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+.regionBtn {
+  padding: 8px 12px;
+  border: 2px solid var(--region-color, #888);
+  background: transparent;
+  color: var(--region-color, #888);
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  transition: background 0.15s;
+}
+
+.regionBtn:hover,
+.regionBtn.active {
+  background: color-mix(in srgb, var(--region-color) 20%, transparent);
+}
+
+/* ── Coord display ── */
+.coordDisplay {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.coordRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+
+.coordRow span {
+  width: 20px;
+  color: #7ab87a;
+}
+
+.coordRow code {
+  flex: 1;
+  color: #00ff88;
+  font-size: 0.82rem;
+}
+
+.coordPx {
+  color: rgba(0, 255, 136, 0.5) !important;
+  font-size: 0.68rem !important;
+  width: auto !important;
+}
+
+.nudgeHint {
+  font-size: 0.68rem;
+  color: #4a7a4a;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nudgeHint kbd {
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 2px;
+  padding: 0px 4px;
+  font-size: 0.65rem;
+  color: #7ab87a;
+}
+
+/* ── Config output ── */
+.copyBtn {
+  padding: 8px 14px;
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid #00ff88;
+  color: #00ff88;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+  text-align: center;
+}
+
+.copyBtn:hover {
+  background: rgba(0, 255, 136, 0.3);
+}
+
+.configPreview {
+  font-size: 0.65rem;
+  line-height: 1.5;
+  color: #6ba86b;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 136, 0.1);
+  border-radius: 4px;
+  padding: 10px;
+  overflow: auto;
+  max-height: 300px;
+  white-space: pre;
+  margin: 0;
+}
+
+/* ── Canvas area ── */
+.calibrateCanvas {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.imageContainer {
+  position: relative;
+  display: inline-block;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  user-select: none;
+}
+
+.templateImage {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 200px);
+  width: auto;
+  height: auto;
+  pointer-events: none;
+}
+
+/* ── Region overlay boxes ── */
+.regionOverlay {
+  position: absolute;
+  border: 2px solid transparent;
+  cursor: move;
+  box-sizing: border-box;
+}
+
+.regionOverlay:hover {
+  filter: brightness(1.3);
+}
+
+.regionActive {
+  border-style: dashed !important;
+}
+
+.regionLabel {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 0.6rem;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 0 4px rgba(0,0,0,0.9);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.resizeHandle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  background: white;
+  cursor: nwse-resize;
+  border-top-left-radius: 3px;
+  opacity: 0.8;
+}
+
+.imageInfo {
+  font-size: 0.72rem;
+  color: #4a7a4a;
+  margin: 0;
+}
+
+.imageInfo strong { color: #00ff88; }
+.imageInfo code { color: #7ab87a; }

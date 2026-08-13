@@ -1,3 +1,15 @@
+/**
+ * @deprecated BaseTemplate.jsx — DEAD CODE, DO NOT USE
+ *
+ * This component is an orphaned HTML/CSS recreation of the Base template card.
+ * It is NOT rendered anywhere in the production user flow (app/page.js uses
+ * PreviewCanvas.jsx via the Canvas renderer instead).
+ *
+ * Retained (not deleted) until the new Canvas renderer has been verified
+ * across all five templates in production.
+ *
+ * When verified, this file and BaseTemplate.module.css will be removed.
+ */
 'use client';
 
 import { useMemo } from 'react';

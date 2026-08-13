@@ -1,88 +1,138 @@
 /* ============================================================
-   PREVIEW CANVAS STYLES
-   Hybrid approach: template PNG bg + canvas photo + HTML text
+   PreviewCanvas.module.css
+   Single-canvas preview + export UI
    ============================================================ */
 
 .previewWrapper {
   width: 100%;
-  max-width: 640px;
+  max-width: 620px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  align-items: stretch;
+  gap: 16px;
 }
 
+/* ── Canvas container ─────────────────────────────────────────── */
 .canvasWrap {
   position: relative;
   width: 100%;
-  border: 2px solid rgba(242, 240, 213, 0.55);
-  border-radius: 14px;
+  border: 2px solid rgba(242, 240, 213, 0.4);
+  border-radius: 12px;
   background: #02261f;
-  padding: 12px;
-}
-
-/* ── Card container: holds template bg + photo canvas + text ── */
-.cardContainer {
-  position: relative;
-  width: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: 8px;
+  padding: 10px;
   overflow: hidden;
 }
 
-/* ── Photo canvas: absolutely positioned over the beige placeholder ── */
-.photoCanvas {
-  position: absolute;
+/* The canvas fills the container width; CSS aspect-ratio preserves
+   the template's native proportions. Backing resolution is always
+   the full native px (e.g. 1856×2304), CSS only scales display. */
+.outputCanvas {
   display: block;
-  /* Canvas native resolution is set via JS (width/height attrs)
-     but it's displayed at CSS % size to match the template */
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
 }
 
-/* ── Text fields: positioned over the beige input boxes ── */
-.textField {
-  position: absolute;
-  transform: translateY(-50%); /* y coordinate is vertical center */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* Loading spinner over the canvas */
+/* ── Loading overlay ──────────────────────────────────────────── */
 .loadingOverlay {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
+  inset: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   background: rgba(2, 38, 31, 0.85);
   z-index: 2;
-  border-radius: 14px;
+  border-radius: 6px;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255, 213, 0, 0.3);
-  border-top-color: var(--color-yellow);
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255, 213, 0, 0.25);
+  border-top-color: #FFD500;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.7s linear infinite;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* Action buttons row */
-.previewActions {
+.loadingLabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 213, 0, 0.7);
+}
+
+/* ── Error state ──────────────────────────────────────────────── */
+.renderError {
+  margin-top: 8px;
+  padding: 10px 16px;
+  border: 1px solid #ff5898;
+  border-radius: 6px;
+  background: rgba(255, 88, 152, 0.08);
+  color: #ffb3d1;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+/* ── Status bar ───────────────────────────────────────────────── */
+.statusBar {
   display: flex;
-  gap: 14px;
-  width: 100%;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(164, 243, 208, 0.8);
+}
+
+.statusDot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6b7280;
+  transition: background 0.3s;
+}
+
+.statusDot[data-status='rendering'] {
+  background: #fbbf24;
+  animation: pulse 1s ease infinite;
+}
+
+.statusDot[data-status='done'] {
+  background: #34d399;
+}
+
+.statusDot[data-status='error'] {
+  background: #f87171;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+.statusText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Action buttons ───────────────────────────────────────────── */
+.actions {
+  display: flex;
+  gap: 12px;
 }
 
 .downloadBtn,
@@ -92,92 +142,73 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 6px;
   padding: 14px 20px;
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  border-radius: 6px;
   border: 2px solid #171b16;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease;
 }
 
+/* Yellow download button */
 .downloadBtn {
-  background: var(--color-yellow);
+  background: #FFD500;
   color: #152d20;
-  box-shadow: 3px 3px 0 rgba(15, 24, 18, 0.75);
+  box-shadow: 3px 3px 0 rgba(15, 24, 18, 0.8);
 }
 
-.downloadBtn:hover {
+.downloadBtn:hover:not(:disabled) {
+  background: #FFE34D;
   transform: translate(-1px, -1px);
-  box-shadow: 5px 5px 0 rgba(15, 24, 18, 0.75);
-  background: var(--color-yellow-soft);
+  box-shadow: 5px 5px 0 rgba(15, 24, 18, 0.8);
 }
 
+.downloadBtn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(15, 24, 18, 0.8);
+}
+
+.downloadBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Ghost share button */
 .shareBtn {
-  background: rgba(1, 43, 35, 0.88);
-  color: #fffdf2;
-  border-color: rgba(242, 240, 213, 0.55);
+  background: rgba(2, 43, 28, 0.9);
+  color: #f4efe6;
+  border-color: rgba(242, 240, 213, 0.4);
   box-shadow: 3px 3px 0 rgba(15, 24, 18, 0.5);
 }
 
 .shareBtn:hover {
+  background: rgba(3, 61, 42, 0.95);
+  border-color: #FFD500;
   transform: translate(-1px, -1px);
   box-shadow: 5px 5px 0 rgba(15, 24, 18, 0.5);
-  background: rgba(3, 61, 48, 0.94);
-  border-color: var(--color-yellow);
+}
+
+.shareBtn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(15, 24, 18, 0.5);
 }
 
 .shareBtn svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: currentColor;
+  flex-shrink: 0;
 }
 
-/* Status badge */
-.statusBadge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #a7f3d0;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.statusDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #34d399;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* Error message */
-.renderError {
-  padding: 12px 20px;
-  border: 1px solid #ff5898;
-  border-radius: 8px;
-  background: rgba(255, 88, 152, 0.1);
-  color: #ffb3d1;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-}
-
-/* ============================================================
-   MOBILE
-   ============================================================ */
-
+/* ── Mobile ───────────────────────────────────────────────────── */
 @media (max-width: 767px) {
   .previewWrapper {
     max-width: 100%;
@@ -188,7 +219,7 @@
     padding: 8px;
   }
 
-  .previewActions {
+  .actions {
     flex-direction: column;
     gap: 10px;
   }
@@ -196,6 +227,10 @@
   .downloadBtn,
   .shareBtn {
     min-height: 52px;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
+  }
+
+  .statusText {
+    font-size: 0.62rem;
   }
 }
