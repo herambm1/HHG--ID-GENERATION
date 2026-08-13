@@ -33,6 +33,7 @@ export default function PreviewCanvas({ template, userImageUrl, cropParams, user
   const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState(null);
   const [downloading, setDownloading] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   // Re-render whenever any input changes
   useEffect(() => {
@@ -80,9 +81,18 @@ export default function PreviewCanvas({ template, userImageUrl, cropParams, user
     }
   }, [template, status]);
 
-  const handleShare = useCallback(() => {
-    shareToX(template?.title ?? 'HHGoa2026');
-  }, [template]);
+  const handleShare = useCallback(async () => {
+    const canvas = canvasRef.current;
+    if (!canvas || status !== 'done') return;
+    setSharing(true);
+    try {
+      await shareToX(canvas, template?.title ?? 'HHGoa2026');
+    } catch (err) {
+      console.error('[PreviewCanvas] Share error:', err);
+    } finally {
+      setSharing(false);
+    }
+  }, [template, status]);
 
   if (!template) return null;
 
@@ -154,10 +164,11 @@ export default function PreviewCanvas({ template, userImageUrl, cropParams, user
           type="button"
           className={styles.shareBtn}
           onClick={handleShare}
+          disabled={!isReady || sharing}
           aria-label="Share to X (Twitter)"
         >
           <XIcon />
-          Share to X
+          {sharing ? 'Sharing…' : 'Share to X'}
         </button>
       </div>
     </div>

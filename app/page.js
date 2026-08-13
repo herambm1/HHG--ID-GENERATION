@@ -185,7 +185,7 @@ export default function HomePage() {
                 Upload your <span>photo</span>
               </h1>
               <p className={styles.pageDesc}>
-                Choose a clear photo of yourself. JPG, PNG, and WEBP are supported. HEIC support is coming soon for iPhone photos.
+                Choose a clear photo of yourself. JPG, PNG, WEBP, and iPhone HEIC photos are all supported.
               </p>
             </div>
 

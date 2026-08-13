@@ -45,31 +45,26 @@ export default function ImageUploader({ onImageReady, onImageCleared, value }) {
         revokePreviewUrl(image.previewUrl);
       }
 
-      const { image: normalized, error: uploadError } = await normalizeUploadedFile(file);
-
-      if (uploadError === 'HEIC_NEEDS_CONVERSION') {
-        // HEIC file on a browser that cannot decode it natively.
-        // Phase 3 will add heic2any conversion here.
-        // For now: show an informational note and ask user to convert manually.
+      // Check if this is a HEIC file — show conversion note in UI
+      const ext = file.name?.split('.').pop()?.toLowerCase();
+      const isHeic = ext === 'heic' || ext === 'heif' ||
+        file.type === 'image/heic' || file.type === 'image/heif';
+      if (isHeic) {
         setHeicNote(true);
-        setStatus(UPLOAD_STATUS.ERROR);
-        setError(
-          'HEIC images cannot be decoded on this browser yet. ' +
-          'Please use a JPG, PNG, or WEBP instead, or take a screenshot of your photo.'
-        );
-        setInternalImage(null);
-        onImageCleared?.();
-        return;
       }
+
+      const { image: normalized, error: uploadError } = await normalizeUploadedFile(file);
 
       if (uploadError) {
         setStatus(UPLOAD_STATUS.ERROR);
         setError(uploadError);
+        setHeicNote(false);
         setInternalImage(null);
         onImageCleared?.();
         return;
       }
 
+      setHeicNote(false);
       setInternalImage(normalized);
       setStatus(UPLOAD_STATUS.SELECTED);
       onImageReady?.(normalized);
@@ -167,7 +162,9 @@ export default function ImageUploader({ onImageReady, onImageCleared, value }) {
       <div className={styles.uploaderWrapper}>
         <div className={styles.loadingState} aria-live="polite" aria-label="Processing image">
           <div className={styles.spinner} role="status" />
-          <span className={styles.loadingText}>Reading image&hellip;</span>
+          <span className={styles.loadingText}>
+            {heicNote ? 'Converting iPhone photo\u2026' : 'Reading image\u2026'}
+          </span>
         </div>
       </div>
     );
