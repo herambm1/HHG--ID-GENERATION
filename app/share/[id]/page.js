@@ -1,32 +1,79 @@
 /**
- * /share/[id] — Share page
+ * /share/[id] — Twitter Card share page
  *
- * This page exists primarily for Twitter's crawler. When a tweet contains
- * a link to /share/[id], Twitter crawls this page and reads the OG meta tags
- * to display a rich card preview with the user's generated card image.
+ * When a tweet contains a link to /share/[id], Twitter's crawler visits this page
+ * and reads the OG / Twitter Card meta tags. The `twitter:card = summary_large_image`
+ * meta tag tells Twitter to display the card image as a large preview under the tweet.
  *
- * Human visitors see a simple page with the card image and a CTA to create their own.
+ * Image lookup:
+ * - Vercel Blob (production): lists blobs with prefix `shares/{id}`
+ * - Filesystem fallback (local): serves via /api/shares/[id]/image
  */
 
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { headers } from 'next/headers';
-import Image from 'next/image';
 import Link from 'next/link';
 
 const SHARES_DIR = join(process.cwd(), '.data', 'shares');
 
 /**
- * Dynamic OG metadata so Twitter shows the card image in the tweet.
+ * Checks whether the share image exists (without returning the URL).
+ * Used by generateMetadata to conditionally include OG image tags.
  */
+async function checkImageExists(id, origin) {
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const { list } = await import('@vercel/blob');
+    const { blobs } = await list({ prefix: `shares/${id}`, limit: 1 });
+    return blobs.length > 0;
+  }
+
+  const filePath = join(SHARES_DIR, `${id}.png`);
+  return existsSync(filePath);
+}
+
+/**
+ * Finds the public image URL for a share ID.
+ * Used by the page component to display the image inline.
+ */
+async function getImageUrl(id, origin) {
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    // Vercel Blob — find the uploaded image
+    const { list } = await import('@vercel/blob');
+    const { blobs } = await list({ prefix: `shares/${id}`, limit: 1 });
+    return blobs[0]?.url || '';
+  }
+
+  // Filesystem fallback
+  const filePath = join(SHARES_DIR, `${id}.png`);
+  if (existsSync(filePath)) {
+    return `${origin}/api/shares/${id}/image`;
+  }
+  return '';
+}
+
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const headersList = await headers();
-  const host = headersList.get('host') || 'localhost:3000';
-  const protocol = headersList.get('x-forwarded-proto') || 'http';
-  const origin = `${protocol}://${host}`;
 
-  const imageUrl = `${origin}/api/shares/${id}/image`;
+  // We need the origin for OG image URLs
+  let origin = 'https://hhg-id-generation.vercel.app';
+  try {
+    const { headers } = await import('next/headers');
+    const headersList = await headers();
+    const host = headersList.get('host');
+    const proto = headersList.get('x-forwarded-proto') || 'https';
+    if (host) origin = `${proto}://${host}`;
+  } catch {
+    // Use default origin
+  }
+
+  // Use our own API route for the OG image — Twitter's crawler works more
+  // reliably with same-domain URLs that return proper Content-Type headers.
+  // The /api/og/[id] route fetches from Vercel Blob or filesystem internally.
+  const ogImageUrl = `${origin}/api/og/${id}`;
+  const shareUrl = `${origin}/share/${id}`;
+
+  // Check if the image actually exists before including it in metadata
+  const imageExists = await checkImageExists(id, origin);
 
   return {
     title: 'My HH Goa 2026 Builder Card | #FrameInGoa',
@@ -34,31 +81,49 @@ export async function generateMetadata({ params }) {
       'Check out my Hacker House Goa 2026 card! Create yours too — upload a photo, pick a template, share to X. #FrameInGoa #HHGoa2026',
     openGraph: {
       title: 'My HH Goa 2026 Builder Card',
-      description: 'Check out my Hacker House Goa 2026 card! #FrameInGoa #HHGoa2026',
+      description:
+        'Check out my Hacker House Goa 2026 card! #FrameInGoa #HHGoa2026',
+      type: 'website',
       siteName: 'HH Goa 2026',
-      images: [
-        {
-          url: imageUrl,
-          width: 1080,
-          height: 1350,
-          alt: 'Hacker House Goa 2026 Builder Card',
-        },
-      ],
+      url: shareUrl,
+      images: imageExists
+        ? [
+            {
+              url: ogImageUrl,
+              width: 1080,
+              height: 1350,
+              alt: 'Hacker House Goa 2026 Builder Card',
+            },
+          ]
+        : [],
     },
     twitter: {
       card: 'summary_large_image',
       title: 'My HH Goa 2026 Builder Card',
-      description: 'Check out my Hacker House Goa 2026 card! #FrameInGoa #HHGoa2026',
-      images: [imageUrl],
+      description:
+        'Check out my Hacker House Goa 2026 card! #FrameInGoa #HHGoa2026',
+      images: imageExists ? [ogImageUrl] : [],
     },
   };
 }
 
 export default async function SharePage({ params }) {
   const { id } = await params;
-  const imageExists = existsSync(join(SHARES_DIR, `${id}.png`));
 
-  if (!imageExists) {
+  let origin = 'https://hhg-id-generation.vercel.app';
+  try {
+    const { headers } = await import('next/headers');
+    const headersList = await headers();
+    const host = headersList.get('host');
+    const proto = headersList.get('x-forwarded-proto') || 'https';
+    if (host) origin = `${proto}://${host}`;
+  } catch {
+    // Use default origin
+  }
+
+  const imageUrl = await getImageUrl(id, origin);
+
+  if (!imageUrl) {
     return (
       <div style={styles.wrapper}>
         <div style={styles.card}>
@@ -83,7 +148,7 @@ export default async function SharePage({ params }) {
         <div style={styles.imageWrap}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`/api/shares/${id}/image`}
+            src={imageUrl}
             alt="Hacker House Goa 2026 Builder Card"
             style={styles.image}
           />

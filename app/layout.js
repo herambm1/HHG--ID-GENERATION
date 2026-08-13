@@ -25,6 +25,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata = {
+  metadataBase: new URL('https://hhg-id-generation.vercel.app'),
   title: 'HH Goa 2026 — Frame & Builder ID Generator',
   description:
     'Create your Hacker House Goa 2026 PFP frame or Builder ID card. Upload a photo, pick a template, and share to X. #FrameInGoa',
